@@ -1,7 +1,7 @@
 const { UserModel } = require("../model");
 const { ModelResolver } = require("./resolvers");
 const expressJwt = require("express-jwt");
-
+import jwt from 'jsonwebtoken';
 module.exports = {
   register: (req, res) => {
     UserModel.UsersUserRegisterService(req.body)
@@ -14,19 +14,46 @@ module.exports = {
       .catch((err) => res.json(err));
   },
 
-  isSignedIn: expressJwt({
-    secret: process.env.JWT_SECRET,
-    algorithms: ["HS256"],
-  }),
+  isSignedIn:(req,res,next)=>{
 
-  // Load User Data in the req object
-  loadUser: (req, res, next) => {
     if (!req.user) {
       res.json({
         success: false,
         message: "User is not logged in",
       });
     }
+    const token=user.token;
+    if (token && jwt.decode(token)) {
+      const expiry = jwt.decode(token).exp;
+      const now = new Date();
+      if(now.getTime() > expiry * 1000)
+      {
+        res.json({
+          success: false,
+          message: "User tokken expired Please login again.",
+        });     
+      }
+      else
+      {
+        next()
+      }
+      
+    }
+    else
+    {
+      res.json({
+        success: false,
+        message: "User is not logged in",
+      });
+      
+    }
+
+
+  },
+
+  // Load User Data in the req object
+  loadUser: (req, res, next) => {
+   
 
     if(req.body.role && req.body.role==='Vendor')
     {
@@ -49,13 +76,7 @@ module.exports = {
   },
 
   loadVendor: (req, res, next) => {
-    if (!req.user) {
-      res.json({
-        success: false,
-        message: "User is not logged in",
-      });
-    }
-
+   
     UserModel.UsersLoadVendorService(req.user)
       .then((data) => {
         req.user = data;

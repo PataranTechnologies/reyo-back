@@ -42,5 +42,13 @@ module.exports = (app) => {
     UserControllers.isSignedIn,
     UserControllers.loadVendor,
     StoreControllers.getStore
-  )
+  );
+
+  app.get(
+    `${prefix}get/near/:userId/`,
+    UserControllers.isSignedIn,
+    UserControllers.loadUser,
+    StoreControllers.getStoresNearUser
+  );
+
 };

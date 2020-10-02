@@ -18,7 +18,6 @@ const SearchSchema=Mongoose.Schema({
     user:{
         type:Mongoose.Schema.Types.ObjectId,
         refPath='role',
-        required:true,
     }
 
 

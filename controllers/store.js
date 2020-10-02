@@ -49,4 +49,15 @@ module.exports = {
 
   });
  },
+ getStoresNearUser:(req,res)=>{
+
+
+  StoreModel.StoreGetStoresNearUserService(req, req.params).then((success)=>{
+    res.json(success);
+}).catch((err)=>{
+  res.json(err)
+
+});
+
+ }
 };
