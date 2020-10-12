@@ -12,7 +12,14 @@ module.exports = ({ user, body }, { storeId }) =>
 if(!storeId)
 {
   return reject(sendError(0,"StoreId Required"))
-}    
+}   
+
+if(!body.reuseType)
+{
+  return reject(sendError(0,"reuseType Required"))
+
+}
+
  var start = new Date();
 start.setHours(0,0,0,0);
 
@@ -39,6 +46,7 @@ var pipeline =
              user:user.id,
              store:storeId,
              resusePoints:1,
+             reuseType:body.reuseType,
          }
          qrReuse=await ReusePointsModel.create(qr);
     

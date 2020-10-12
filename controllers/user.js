@@ -2,6 +2,7 @@ const { UserModel } = require("../model");
 const { ModelResolver } = require("./resolvers");
 const expressJwt = require("express-jwt");
 import jwt from 'jsonwebtoken';
+import User from '../schemas/User';
 module.exports = {
   register: (req, res) => {
     UserModel.UsersUserRegisterService(req.body)
@@ -166,6 +167,14 @@ module.exports = {
   },
   getUserReusePoints:(req,res)=>{
     UserModel.UserGetUserReusePointsService(req,req,params).then((success) => {
+      res.json(success);
+    })
+    .catch((error) => {
+      res.json(error);
+    });
+  },
+  getReuseHistory:(req,res)=>{
+    UserModel.userGetReuseHistoryService(req,req.params).then((success) => {
       res.json(success);
     })
     .catch((error) => {
