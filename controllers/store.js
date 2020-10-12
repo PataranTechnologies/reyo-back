@@ -27,7 +27,7 @@ module.exports = {
   },
 
   getStoresforVendor: (req, res) => {
-    StoreModel.StoresGetStoreForVendorService(req.params)
+    StoreModel.StoresGetStoreForVendorService(req,req.params)
       .then((success) => {
         res.json(success);
       })
@@ -59,5 +59,16 @@ module.exports = {
 
 });
 
+ },
+
+ getAllReuseUsers:(req,res)=>{
+
+  StoreModel.StoreGetAllReuseUsersService(req,req.params).then((success)=>{
+   res.json(success)
+  }).catch((err)=>{
+    res.json(err)
+  })
  }
+
+
 };

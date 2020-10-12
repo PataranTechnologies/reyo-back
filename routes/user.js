@@ -17,4 +17,6 @@ module.exports = (app) => {
     UserControllers.forgotPassword
   );
   app.post(`${prefix}login`, UserControllers.login);
+  app.post(`${prefix}scanQR`,UserControllers.isSignedIn,UserControllers.loadUser, UserControllers.qrScan);
+  app.get(`${prefix}getReusePoint`,UserControllers.isSignedIn,UserControllers.loadUser,UserControllers.getUserReusePoints);
 };

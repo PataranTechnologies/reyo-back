@@ -154,4 +154,22 @@ module.exports = {
         res.json(error);
       });
   },
+  qrScan:(req,res)=>{
+
+    UserModel.UserQrScanService(req,req.params).then((success) => {
+      res.json(success);
+    })
+    .catch((error) => {
+      res.json(error);
+    });
+
+  },
+  getUserReusePoints:(req,res)=>{
+    UserModel.UserGetUserReusePointsService(req,req,params).then((success) => {
+      res.json(success);
+    })
+    .catch((error) => {
+      res.json(error);
+    });
+  }
 };

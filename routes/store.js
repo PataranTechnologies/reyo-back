@@ -50,5 +50,11 @@ module.exports = (app) => {
     UserControllers.loadUser,
     StoreControllers.getStoresNearUser
   );
+  app.get(
+    `${prefix}get/allReuseUsers/:storeId`,
+    UserControllers.isSignedIn,
+    UserControllers.loadVendor,
+    StoreControllers.getAllReuseUsers,
+  )
 
 };
