@@ -1,6 +1,6 @@
 const VendorModel = require("../../schemas/Vendor");
 const { HOST } = require("../../constants");
-
+const Client =require('../../redis')
 // Send Error Response to user
 const sendError = (status, errors) => ({
   status,
@@ -16,6 +16,8 @@ module.exports = ({
   password,
   confirmPassword,
   vendorId,
+  countryCode,
+  phoneNumber,
   device,
 }) =>
   new Promise(async (resolve, reject) => {
@@ -27,7 +29,9 @@ module.exports = ({
         !email ||
         !password ||
         !confirmPassword ||
-        !vendorId
+        !vendorId ||
+        !countryCode ||
+        !phoneNumber
       ) {
         return reject(
           sendError(0, { msg: "Please fill all the required fields" })
@@ -39,8 +43,15 @@ module.exports = ({
         return reject(sendError(0, { msg: "Password doesn't match" }));
       }
 
-      let vendor = await VendorModel.findOne({ email });
+      let vendor=null;
+    //  vendor= await Client.get(email);
 
+  //    if(!vendor)
+ //     {
+        vendor= await VendorModel.findOne({ email });
+
+    //    if(vendor) Client.setex(email,3600,{...vendor,password:'',salt:''});
+   //   }
       // Check if user's email is already registered
       if (vendor) {
         return reject(sendError(0, { msg: "Email already registered" }));
@@ -52,6 +63,8 @@ module.exports = ({
         email,
         password,
         vendorId,
+        countryCode,
+        phoneNumber,
       };
 
       if (!!lastName) newVendor["lastName"] = lastName;
@@ -61,7 +74,8 @@ module.exports = ({
       if (!!logo) newVendor["logo"] = logo;
 
       vendor = new VendorModel(newVendor);
-
+      vendor.password=vendor.securePasswords(password);
+      console.log(vendor);
       // Check is user could not be created
       if (!vendor) {
         return reject(sendError(0, { msg: "User could not be created" }));
@@ -72,6 +86,8 @@ module.exports = ({
       vendor['emailTokenDate']=new Date();
       vendor['createdOn']=new Date();
       await vendor.save({ validateBeforeSave: false });
+
+     
 
       const tokenVerificationLink = `<a href="${HOST}/api/user/email/verify?token=${verificationToken}&id=${vendor._id}&role=vendor">Click Here To Verify Your account</a>`;
 

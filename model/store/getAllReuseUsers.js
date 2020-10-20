@@ -23,7 +23,7 @@ try{
 
     const finalList=await ReusePointModel.find({store:storeId})
 
-    finalList.forEach((reuse)=>{
+    finalList.forEach(async(reuse)=>{
 
     const user=await UserModel.findById(reuse.user);
 

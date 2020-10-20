@@ -5,7 +5,7 @@ module.exports=(app)=>{
 
     app.post(
     `${prefix}create/:userId`,
-
+    UserControllers.authenticateJWT,
     UserControllers.isSignedIn,
     UserControllers.loadUser,
     ReminderControllers.createReminder,
@@ -15,6 +15,7 @@ module.exports=(app)=>{
 
     app.get(
     `${prefix}get/:userId`,
+    UserControllers.authenticateJWT,
         UserControllers.isSignedIn,
         UserControllers.loadUser,
         ReminderControllers.getAllRemainder,
@@ -22,6 +23,7 @@ module.exports=(app)=>{
 
     app.delete(
        `${prefix}delete/:userId`,
+       UserControllers.authenticateJWT,
        UserControllers.isSignedIn,
        UserControllers.loadUser,
        ReminderControllers.deleteReminder

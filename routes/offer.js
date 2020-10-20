@@ -5,7 +5,7 @@ module.exports=(app)=>{
 
     app.post(
     `${prefix}create/:vendorId/:storeId`,
-
+    UserControllers.authenticateJWT,
     UserControllers.isSignedIn,
     UserControllers.loadVendor,
     OfferControllers.createOffer,
@@ -15,6 +15,7 @@ module.exports=(app)=>{
 
     app.delete(
        `${prefix}delete/:vendorId/:storeId/:offerId`,
+       UserControllers.authenticateJWT,
        UserControllers.isSignedIn,
        UserControllers.loadVendor,
        OfferControllers.deleteOffer
@@ -22,6 +23,7 @@ module.exports=(app)=>{
 
     app.put(
         `${prefix}update/:vendorId/:storeId/:offerId`,
+        UserControllers.authenticateJWT,
         UserControllers.isSignedIn,
         UserControllers.loadVendor,
         OfferControllers.editOffer,

@@ -5,7 +5,7 @@ module.exports=(app)=>{
 
     app.post(
     `${prefix}create/:vendorId`,
-
+    UserControllers.authenticateJWT,
     UserControllers.isSignedIn,
     UserControllers.loadVendor,
     CampaignControllers.createCampaign,

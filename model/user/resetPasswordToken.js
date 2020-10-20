@@ -1,7 +1,7 @@
 const UserModel = require("../../schemas/User");
 const VendorModel = require("../../schemas/Vendor");
 const { EMAIL_SERVICE, EMAIL_USER, EMAIL_PASS } = require("../../constants");
-
+const { HOST } = require("../../constants");
 const nodemailer = require("nodemailer");
 
 // Send Error Response to user
@@ -33,13 +33,17 @@ module.exports = ({ email, role }) =>
           pass: EMAIL_PASS,
         },
       });
+      const tokenVerificationLink = `<a href="${HOST}/api/passwordReset/?token=${token}&id=${user._id}&role=${role}&HOST=${HOST}">Click Here To Reset Password</a>`;
 
       let mailOptions = {
         from: `"Reset Password ${process.env.EMAIL_USER}`,
         to: email,
         subject: "RESET PASSWORD",
         text: "",
-        html: `<p>Your reset password token is : ${token}</p>`,
+        html: `${tokenVerificationLink}`,
+        
+       
+       
       };
 
       let info = await transporter.sendMail(mailOptions);

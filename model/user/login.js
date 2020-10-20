@@ -1,6 +1,7 @@
 const UserModel = require("../../schemas/User");
 const VendorModel = require("../../schemas/Vendor");
-
+const Client =require('../../redis');
+const { json } = require("body-parser");
 // Get Signed Token
 const sendToken = (user, role) => {
   const token = user.getToken();
@@ -11,6 +12,7 @@ const sendToken = (user, role) => {
     name: user.firstname,
     token,
     role,
+    user:{...user,password:'********',salt:'********'}
   };
 };
 
@@ -29,20 +31,34 @@ module.exports = ({ email, password, role }) =>
       }
 
       let Model = role === "vendor" ? VendorModel : UserModel;
+      let user=null;
+    //  user=await Client.getAsync(email);
+     
+    
+    //  if(!user)
+    //  {
+        user= await Model.findOne({ email });
 
-      let user = await Model.findOne({ email }).select("+password");
 
+
+    //    if(user) Client.setex(email,3600,JSON.stringify({...user,password:'',salt:''}));
+     
+    //  }
       // Check if user's email is already registered
+     
       if (!user) {
         return reject(sendError(0, "Email is not registered"));
       }
+   //   user=Object.assign(new Model({}), JSON.parse(user))
+      console.log(user)
 
+       
       if (!user.authenticate(password)) {
         return reject(sendError(0, "Password is not valid"));
       }
 
       // Send Success Response
-      return resolve(sendToken(user, role));
+      return resolve({status:1,data:sendToken(user, role)});
     } catch (error) {
       console.log(error);
       return reject({ msg: "Something went wrong", status: 0 });

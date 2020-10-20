@@ -5,7 +5,7 @@ module.exports=(app)=>{
 
     app.post(
     `${prefix}sendInvitation/:userId`,
-
+    UserControllers.authenticateJWT,
     UserControllers.isSignedIn,
     UserControllers.loadUser,
     InviteControllers.sendInvitation,

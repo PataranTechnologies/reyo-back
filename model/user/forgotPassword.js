@@ -32,8 +32,10 @@ module.exports = ({ id, token, password, confirmpassword, role }) =>
         return reject(sendError(0, "Reset Password Token is Invalid"));
       }
       // Check if user's email is already registered
-      user.password = password;
+      
       user.resetPasswordToken = undefined;
+
+      user.password=user.securePasswords(password);
 
       await user.save({ validateBeforeSave: false });
 

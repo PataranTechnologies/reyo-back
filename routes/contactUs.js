@@ -6,6 +6,7 @@ module.exports=(app)=>{
 
     app.post(
         `${prefix}:userId/`,
+        UserControllers.authenticateJWT,
         UserControllers.isSignedIn,
         UserControllers.loadUser,
         ContactUsControllers.contactAdmin,

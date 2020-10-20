@@ -33,11 +33,11 @@ var pipeline =
     "createdAt": { "$gte": start, "$lt": end },
      'user':user.id,
       'store':storeId
-  },
+  }
  
 
- const vals=await ReusePointsModel.find(pipeline);
- if(vals.length>=3)
+ let values=await ReusePointsModel.find(pipeline);
+ if(values.length>=3)
  {
    return reject(sendError(0,"You Have Already Reached your limit to claim Reuse point at this Store"));
  }

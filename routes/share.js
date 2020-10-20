@@ -5,6 +5,7 @@ module.exports=(app)=>{
 
     app.post(
     `${prefix}post/OnSn/:userId`,
+    UserControllers.authenticateJWT,
     UserControllers.isSignedIn,
     UserControllers.loadUser,
     ShareControllers.shareOnSn,
@@ -14,6 +15,7 @@ module.exports=(app)=>{
 
     app.get(
         `${prefix}get/:userId`,
+        UserControllers.authenticateJWT,
         UserControllers.isSignedIn,
         UserControllers.loadUser,
         ShareControllers.getAllSharesByUser,

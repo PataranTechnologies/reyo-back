@@ -1,13 +1,36 @@
 const { UserModel } = require("../model");
 const { ModelResolver } = require("./resolvers");
 const expressJwt = require("express-jwt");
-import jwt from 'jsonwebtoken';
-import User from '../schemas/User';
+const jwt=require('jsonwebtoken')
+const User =require('../schemas/User');
+const nodemailer=require('nodemailer')
+const { JWT_SECRET, JWT_EXPIRE } = require("../constants");
 module.exports = {
+
+ authenticateJWT : (req, res, next) => {
+    const authHeader = req.headers.authorization;
+ 
+    if (authHeader) {
+        const token = authHeader.split(' ')[1];
+
+        jwt.verify(token, JWT_SECRET, (err, user) => {
+            if (err) {
+                return res.sendStatus(403);
+            }
+
+            req.user = user;
+            next();
+        });
+    } else {
+        res.sendStatus(401);
+    }
+},
+
   register: (req, res) => {
     UserModel.UsersUserRegisterService(req.body)
       .then((emailData) => {
-        //Sending Verification email
+       
+  
         UserModel.UsersSendEmailService(emailData)
           .then((success) => res.status(200).json(success))
           .catch((err) => res.json(err));
@@ -23,32 +46,9 @@ module.exports = {
         message: "User is not logged in",
       });
     }
-    const token=user.token;
-    if (token && jwt.decode(token)) {
-      const expiry = jwt.decode(token).exp;
-      const now = new Date();
-      if(now.getTime() > expiry * 1000)
-      {
-        res.json({
-          success: false,
-          message: "User tokken expired Please login again.",
-        });     
-      }
-      else
-      {
-        next()
-      }
-      
-    }
-    else
-    {
-      res.json({
-        success: false,
-        message: "User is not logged in",
-      });
-      
-    }
 
+    next();
+   
 
   },
 
@@ -157,7 +157,7 @@ module.exports = {
   },
   qrScan:(req,res)=>{
 
-    UserModel.UserQrScanService(req,req.params).then((success) => {
+    UserModel.UsersQrScanService(req,req.params).then((success) => {
       res.json(success);
     })
     .catch((error) => {
@@ -166,7 +166,7 @@ module.exports = {
 
   },
   getUserReusePoints:(req,res)=>{
-    UserModel.UserGetUserReusePointsService(req,req,params).then((success) => {
+    UserModel.UsersGetUserReusePointsService(req,req,params).then((success) => {
       res.json(success);
     })
     .catch((error) => {
@@ -174,11 +174,16 @@ module.exports = {
     });
   },
   getReuseHistory:(req,res)=>{
-    UserModel.userGetReuseHistoryService(req,req.params).then((success) => {
+    UserModel.usersGetReuseHistoryService(req,req.params).then((success) => {
       res.json(success);
     })
     .catch((error) => {
       res.json(error);
     });
-  }
+  },
+  userThirdPartySignIn:(req, res) => {
+    UserModel.UsersUserThirdPartySignInService(req.body)
+      .then((success) => res.json(success))
+      .catch((error) => res.json(error));
+  },
 };

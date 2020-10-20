@@ -3,16 +3,22 @@ require("dotenv").config();
 const morgan = require("morgan");
 const cors = require("cors");
 const ActivateRoutes = require("./routes/index");
-const QRCode=require('qrcode')
-const app = express();
 
+const app = express();
+const { HOST } = require("./constants");
 (async () => {
   try {
+    app.set('view engine', 'ejs');
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use(morgan("dev"));
     app.use(cors());
     app.use(express.static("static"));
+    app.get('/api/passwordReset',(req,res)=>{
+
+      console.log(req.query);
+      res.render('resetPassword',{...req.query,msg:''});
+    })
     const env = process.env.NODE_ENV ? process.env.NODE_ENV : "development";
     const port = process.env.NODE_ENV === "development" ? 3000 : 3001;
 

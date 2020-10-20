@@ -10,7 +10,7 @@ const vendorSchema = new mongoose.Schema(
     companyname: {
       type: String,
       trim: true,
-      required: [true, "Please add a company name"],
+      
     },
     firstname: {
       type: String,
@@ -23,6 +23,13 @@ const vendorSchema = new mongoose.Schema(
     },
     logo: {
       type: String,
+    },
+    countryCode:{
+    type:String,
+
+    },
+    phoneNumber:{
+     type:String,
     },
     email: {
       type: String,
@@ -42,10 +49,14 @@ const vendorSchema = new mongoose.Schema(
       unique: true,
       required: [true, "Please enter your vendor Id"],
     },
+    signInType:{
+   type:String,
+   default:'local'
+
+    },
     password: {
       type: String,
-      required: true,
-      select: false,
+      
     },
     verificationToken: {
       type: String,
@@ -61,6 +72,7 @@ const vendorSchema = new mongoose.Schema(
     },
     salt: {
       type: String,
+   
     },
     resetPasswordTokenDate:{
       type:Number,
@@ -90,26 +102,27 @@ const vendorSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-vendorSchema.pre("save", function (next) {
-  if (!this.isModified("password")) {
-    next();
-  }
-  this.salt = v4();
-  this.password = this.securePassword(this.password);
-  next();
-});
 
 vendorSchema.methods = {
   authenticate: function (plainpassword) {
-    return this.securePassword(plainpassword) === this.password;
+    let pass=this.securePassword(plainpassword)
+    console.log(pass+"  "+this.password)
+    return pass === this.password;
+  },
+  securePasswords:function (pass) {
+    this.salt = v4();
+    let password = this.securePassword(pass);
+    return password
   },
   securePassword: function (plainpassword) {
-    if (!plainpassword) return "";
     try {
-      return crypto
-        .createHmac("sha256", this.salt)
-        .update(plainpassword)
-        .digest("hex");
+
+      console.log(plainpassword);
+      var cipher = crypto.createCipher('aes-256-ctr',this.salt)
+      var crypted = cipher.update(plainpassword,'utf8','hex')
+    crypted += cipher.final('hex');
+      return crypted
+        
     } catch (error) {
       console.log(error);
       return "";
@@ -118,7 +131,6 @@ vendorSchema.methods = {
   getToken: function (user) {
     return jwt.sign({ id: this._id }, JWT_SECRET, {
       expiresIn: JWT_EXPIRE,
-      algorithm: "HS256",
     });
   },
   getResetPasswordToken: function () {

@@ -15,7 +15,7 @@ const {
 
 const db = process.env.MONGO_DB || "Reyo_App_db";
 
-exports.mongoConnectionString = `mongodb+srv://${ATLAS_USER}:${ATLAS_PASSWORD}@cluster0.3ahhb.mongodb.net/${db}?retryWrites=true&w=majority`;
+exports.mongoConnectionString = "mongodb+srv://rahul_bot1:Ta7t41uTgtRfwdyH@cluster0.dzbde.mongodb.net/ReyoDb2?retryWrites=true&w=majority";
 
 exports.NODE_ENV = NODE_ENV;
 

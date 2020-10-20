@@ -27,19 +27,23 @@ const userSchema = new mongoose.Schema(
     },
     device: {
       type: String,
-      required: true,
+      
     },
     age: {
       type: Number,
-      required: true,
+      
+    },
+    signInType:{
+type:String,
+default:'local',
     },
     password: {
       type: String,
-      required: true,
-      select: false,
+      
     },
     salt: {
       type: String,
+      
     },
     verificationToken: {
       type: String,
@@ -96,26 +100,33 @@ type:Number,
   { timestamps: true }
 );
 
-userSchema.pre("save", function (next) {
-  if (!this.isModified("password")) {
-    next();
-  }
-  this.salt = v4();
-  this.password = this.securePassword(this.password);
-  next();
-});
+
 
 userSchema.methods = {
+ 
   authenticate: function (plainpassword) {
+    var pass=this.securePassword(plainpassword);
+    var decipher = crypto.createDecipher('aes-256-ctr',this.salt);
+    var dec = decipher.update(pass,'hex','utf8')
+  dec += decipher.final('utf8');
+  console.log(dec)
+    console.log(pass+"   "+this.password+"  ")
     return this.securePassword(plainpassword) === this.password;
   },
+  securePasswords:function (pass) {
+    this.salt = v4();
+    let password = this.securePassword(pass);
+    return password
+  },
   securePassword: function (plainpassword) {
-    if (!plainpassword) return "";
     try {
-      return crypto
-        .createHmac("sha256", this.salt)
-        .update(plainpassword)
-        .digest("hex");
+
+      console.log(plainpassword);
+      var cipher = crypto.createCipher('aes-256-ctr',this.salt)
+      var crypted = cipher.update(plainpassword,'utf8','hex')
+    crypted += cipher.final('hex');
+      return crypted
+        
     } catch (error) {
       console.log(error);
       return "";
@@ -124,7 +135,6 @@ userSchema.methods = {
   getToken: function (user) {
     return jwt.sign({ id: this._id }, JWT_SECRET, {
       expiresIn: JWT_EXPIRE,
-      algorithm: "HS256",
     });
   },
   getResetPasswordToken: function () {

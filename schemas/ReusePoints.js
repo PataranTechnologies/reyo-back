@@ -24,4 +24,4 @@ const reusePointsSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = database.model("ResusePoint", reusePontsSchema);
+module.exports = database.model("ResusePoint", reusePointsSchema);
